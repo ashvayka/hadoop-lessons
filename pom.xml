@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.ashvayka.hadoop</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>mr-demo</artifactId>
+    <packaging>jar</packaging>
+    <name>MapReduce Demo</name>
+
+    <properties>
+        <hadoop.core.version>2.0.0</hadoop.core.version>
+        <cloudera.version>cdh4.3.0</cloudera.version>
+        <hadoop.version>${hadoop.core.version}-${cloudera.version}</hadoop.version>
+        <hadoop.mr1.version>${hadoop.core.version}-mr1-${cloudera.version}</hadoop.mr1.version>
+        <log4j.version>1.2.15</log4j.version>
+        <log4j-extras.version>1.0</log4j-extras.version>
+        <slf4j.version>1.6.1</slf4j.version>
+        <junit.version>4.8.2</junit.version>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+            <version>${hadoop.mr1.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-test</artifactId>
+            <version>${hadoop.mr1.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <properties>
+                <build.number>local_build</build.number>
+                <scm.version>local_scm</scm.version>
+            </properties>
+
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
+    <build>
+        <finalName>mr-demo</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <optimize>true</optimize>
+                    <debug>true</debug>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </build>
+    
+    <repositories>
+        <repository>
+            <id>Maven Artifacts</id>
+            <url>http://mvnrepository.com/artifact</url>
+        </repository>
+        <repository>
+            <id>cloudera</id>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+        </repository>
+        <repository>
+            <id>cloudera1</id>
+            <url>https://repository.cloudera.com/content/repositories/releases</url>
+        </repository>
+       <repository>
+            <id>cloudera2</id>
+            <url>https://repository.cloudera.com/artifactory/cdh-releases-rcs</url>
+        </repository>
+        <repository>
+            <id>cloudera3</id>
+            <url>https://repository.cloudera.com/artifactory/repo</url>
+        </repository>
+        <repository>
+            <id>cloudera4</id>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+        </repository>
+    </repositories>
+</project>

@@ -3,7 +3,7 @@ package com.ashvayka.hadoop.common;
 public enum WikiProject {
 	WIKIPEDIA(""), 
 	WIKIBOOKS("b"), WIKTIONARY("d"), WIKIMEDIA("m"), 
-	WIKIPEDIA_MOBILE("m2"), WIKINEWS("n"), WIKIQUOTE("q"), 
+	WIKIPEDIA_MOBILE("mw"), WIKINEWS("n"), WIKIQUOTE("q"), 
 	WIKISOURCE("s"), WIKIVERSITY("v"), MEDIAWIKI("w");
 	
 	private final String extension;

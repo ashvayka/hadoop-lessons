@@ -19,7 +19,7 @@ public class PageView {
 		this.contentSize = contentSize;
 	}
 
-	public static PageView parse(String data){
+	public static PageView parse(String data) throws PageViewParseException{
 		try{
 			String[] tokens = data.split(DATA_DELIM);
 			String[] langProjectPair = tokens[0].toLowerCase().split(LANG_PROJECT_DELIM);
@@ -32,7 +32,7 @@ public class PageView {
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			throw new IllegalArgumentException("Can't parse data: " + data);
+			throw new PageViewParseException("Can't parse data: " + data);
 		}
 	}
 	

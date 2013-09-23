@@ -9,9 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
@@ -22,15 +20,14 @@ import com.ashvayka.hadoop.common.PageViewParseException;
 
 public class LanguagePageCountJob extends AbstractPageCountJob{
 	
+	private static final String JOB_NAME = "LanguagePageCountJob";
+
 	private static final String OUTPUT_FOLDER_NAME = "lang_page_count";
 
 	public static final Logger logger = LoggerFactory.getLogger(LanguagePageCountJob.class);
-
-	private Path inputPath;
 	
 	public LanguagePageCountJob(Path inputPath) {
-		super();
-		this.inputPath = inputPath;
+		super(inputPath);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -39,15 +36,11 @@ public class LanguagePageCountJob extends AbstractPageCountJob{
 	}
 	
 	@Override
-	public int run(String[] arg0) throws Exception {
-		
-		Job job = new Job(getConf(), "LanguagePageCountJob");
-
-		job.setJarByClass(LanguagePageCountJob.class);
-		
+	protected void setupJobParams(Job job) {
+		//Map Key Value classes		
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(LongWritable.class);		
-		
+		//Reduce Key Value classes		
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(LongWritable.class);
 		
@@ -58,13 +51,8 @@ public class LanguagePageCountJob extends AbstractPageCountJob{
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		
-		FileInputFormat.setInputPaths(job, inputPath);
-		FileOutputFormat.setOutputPath(job, getOutputPath());
-		
-		job.submit();
-		
-		return (job.waitForCompletion(true)) ? 1 : 0;
-	}	
+		job.setNumReduceTasks(4);
+	}
 	
 	public static class LanguagePageCountMapper extends Mapper<LongWritable, Text, Text, LongWritable>{
 		
@@ -97,6 +85,11 @@ public class LanguagePageCountJob extends AbstractPageCountJob{
 	@Override
 	String getOutputFolderName() {
 		return OUTPUT_FOLDER_NAME;
+	}
+
+	@Override
+	String getJobName() {
+		return JOB_NAME;
 	}
 		
 }

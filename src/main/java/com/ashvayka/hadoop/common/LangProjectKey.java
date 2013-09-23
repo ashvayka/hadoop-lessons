@@ -11,6 +11,8 @@ public class LangProjectKey implements WritableComparable<LangProjectKey>{
 	String language;
 	WikiProject project;
 	
+	public LangProjectKey(){}
+	
 	public LangProjectKey(String language, WikiProject project) {
 		super();
 		this.language = language;

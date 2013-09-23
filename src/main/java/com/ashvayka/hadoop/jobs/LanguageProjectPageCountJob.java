@@ -9,9 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
@@ -23,33 +21,28 @@ import com.ashvayka.hadoop.common.PageViewParseException;
 
 public class LanguageProjectPageCountJob extends AbstractPageCountJob{
 	
+	private static final String JOB_NAME = "LanguageProjectPageCountJob";
+	
 	private static final String OUTPUT_FOLDER_NAME = "lang_project_page_count";
 
 	public static final Logger logger = LoggerFactory.getLogger(LanguageProjectPageCountJob.class);
-
-	private Path inputPath;
 	
 	public LanguageProjectPageCountJob(Path inputPath) {
-		super();
-		this.inputPath = inputPath;
+		super(inputPath);
 	}
 
 	public static void main(String[] args) throws Exception {
 		logger.info("Starting " + LanguageProjectPageCountJob.class.getSimpleName() + " job");
 		ToolRunner.run(new Configuration(), new LanguageProjectPageCountJob(getInputPath(args)), args);
 	}
-	
+		
 	@Override
-	public int run(String[] arg0) throws Exception {
-		
-		Job job = new Job(getConf(), "LanguageProjectPageCountJob");
-
-		job.setJarByClass(LanguageProjectPageCountJob.class);
-		
+	void setupJobParams(Job job) {
+		//Map Key Value classes
 		job.setMapOutputKeyClass(LangProjectKey.class);
 		job.setMapOutputValueClass(LongWritable.class);		
-		
-		job.setOutputKeyClass(Text.class);
+		//Reduce Key Value classes		
+		job.setOutputKeyClass(LangProjectKey.class);
 		job.setOutputValueClass(LongWritable.class);
 		
 		job.setMapperClass(LanguagePageCountMapper.class);
@@ -59,12 +52,7 @@ public class LanguageProjectPageCountJob extends AbstractPageCountJob{
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 		
-		FileInputFormat.setInputPaths(job, inputPath);
-		FileOutputFormat.setOutputPath(job, getOutputPath());
-		
-		job.submit();
-		
-		return (job.waitForCompletion(true)) ? 1 : 0;
+		job.setNumReduceTasks(4);
 	}	
 	
 	public static class LanguagePageCountMapper extends Mapper<LongWritable, Text, LangProjectKey, LongWritable>{
@@ -82,7 +70,7 @@ public class LanguageProjectPageCountJob extends AbstractPageCountJob{
 			
 	}
 	
-	public static class LanguagePageCountReducer extends Reducer<LangProjectKey, LongWritable, Text, LongWritable>{
+	public static class LanguagePageCountReducer extends Reducer<LangProjectKey, LongWritable, LangProjectKey, LongWritable>{
 		
 		@Override 
 		protected void reduce(LangProjectKey key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException{
@@ -90,7 +78,7 @@ public class LanguageProjectPageCountJob extends AbstractPageCountJob{
 			for(LongWritable requestCount: values){
 				totalRequestCount += requestCount.get();
 			}
-			context.write(new Text(key.toString()), new LongWritable(totalRequestCount));
+			context.write(key, new LongWritable(totalRequestCount));
 			context.progress();
 		}
 	}
@@ -99,5 +87,9 @@ public class LanguageProjectPageCountJob extends AbstractPageCountJob{
 	String getOutputFolderName() {
 		return OUTPUT_FOLDER_NAME;
 	}
-		
+
+	@Override
+	String getJobName() {
+		return JOB_NAME;
+	}		
 }

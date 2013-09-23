@@ -17,35 +17,36 @@ import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ashvayka.hadoop.common.LangProjectKey;
 import com.ashvayka.hadoop.common.PageView;
 import com.ashvayka.hadoop.common.PageViewParseException;
 
-public class LanguagePageCountJob extends AbstractPageCountJob{
+public class LanguageProjectPageCountJob extends AbstractPageCountJob{
 	
-	private static final String OUTPUT_FOLDER_NAME = "lang_page_count";
+	private static final String OUTPUT_FOLDER_NAME = "lang_project_page_count";
 
-	public static final Logger logger = LoggerFactory.getLogger(LanguagePageCountJob.class);
+	public static final Logger logger = LoggerFactory.getLogger(LanguageProjectPageCountJob.class);
 
 	private Path inputPath;
 	
-	public LanguagePageCountJob(Path inputPath) {
+	public LanguageProjectPageCountJob(Path inputPath) {
 		super();
 		this.inputPath = inputPath;
 	}
 
 	public static void main(String[] args) throws Exception {
-		logger.info("Starting " + LanguagePageCountJob.class.getSimpleName() + " job");
-		ToolRunner.run(new Configuration(), new LanguagePageCountJob(getInputPath(args)), args);
+		logger.info("Starting " + LanguageProjectPageCountJob.class.getSimpleName() + " job");
+		ToolRunner.run(new Configuration(), new LanguageProjectPageCountJob(getInputPath(args)), args);
 	}
 	
 	@Override
 	public int run(String[] arg0) throws Exception {
 		
-		Job job = new Job(getConf(), "LanguagePageCountJob");
+		Job job = new Job(getConf(), "LanguageProjectPageCountJob");
 
-		job.setJarByClass(LanguagePageCountJob.class);
+		job.setJarByClass(LanguageProjectPageCountJob.class);
 		
-		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputKeyClass(LangProjectKey.class);
 		job.setMapOutputValueClass(LongWritable.class);		
 		
 		job.setOutputKeyClass(Text.class);
@@ -66,13 +67,13 @@ public class LanguagePageCountJob extends AbstractPageCountJob{
 		return (job.waitForCompletion(true)) ? 1 : 0;
 	}	
 	
-	public static class LanguagePageCountMapper extends Mapper<LongWritable, Text, Text, LongWritable>{
+	public static class LanguagePageCountMapper extends Mapper<LongWritable, Text, LangProjectKey, LongWritable>{
 		
 		@Override
 		protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException{
 			try{
 				PageView pageView = PageView.parse(value.toString());
-				context.write(new Text(pageView.language), new LongWritable(pageView.requestCount));				
+				context.write(new LangProjectKey(pageView.language, pageView.wikiProject), new LongWritable(pageView.requestCount));				
 			}catch(PageViewParseException ex){
 				logger.error("PageView parse failed", ex);
 			}
@@ -81,15 +82,15 @@ public class LanguagePageCountJob extends AbstractPageCountJob{
 			
 	}
 	
-	public static class LanguagePageCountReducer extends Reducer<Text, LongWritable, Text, LongWritable>{
+	public static class LanguagePageCountReducer extends Reducer<LangProjectKey, LongWritable, Text, LongWritable>{
 		
 		@Override 
-		protected void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException{
+		protected void reduce(LangProjectKey key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException{
 			long totalRequestCount = 0;
 			for(LongWritable requestCount: values){
 				totalRequestCount += requestCount.get();
 			}
-			context.write(key, new LongWritable(totalRequestCount));
+			context.write(new Text(key.toString()), new LongWritable(totalRequestCount));
 			context.progress();
 		}
 	}

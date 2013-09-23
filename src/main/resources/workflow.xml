@@ -1,0 +1,31 @@
+<workflow-app xmlns='uri:oozie:workflow:0.1' name='processDir'>
+
+    <start to='langPageCountJob'/>
+
+    <action name='langPageCountJob'>
+	<java>
+	    <job-tracker>${jobTracker}</job-tracker>
+	    <name-node>${nameNode}</name-node>
+	    <main-class>com.ashvayka.hadoop.jobs.LanguagePageCountJob</main-class>
+	    <arg>/wikidata/pageviews/pagecounts-20130101-000000.gz.raw</arg>
+	    <capture-output/>
+	</java>
+	<ok to="langProjectPageCountJob"/>
+	<error to="Finish"/>
+    </action>
+
+    <action name='langProjectPageCountJob'>
+	<java>
+	    <job-tracker>${jobTracker}</job-tracker>
+	    <name-node>${nameNode}</name-node>
+	    <main-class>com.ashvayka.hadoop.jobs.LanguageProjectPageCountJob</main-class>
+	    <arg>/wikidata/pageviews/pagecounts-20130101-000000.gz.raw</arg>
+	    <capture-output/>
+	</java>
+	<ok to="Finish"/>
+	<error to="Finish"/>
+    </action>
+
+    <end name="Finish"/>
+
+</workflow-app>

@@ -9,7 +9,7 @@
 
     <properties>
         <hadoop.core.version>2.0.0</hadoop.core.version>
-        <cloudera.version>cdh4.3.0</cloudera.version>
+        <cloudera.version>cdh4.4.0</cloudera.version>
         <hadoop.version>${hadoop.core.version}-${cloudera.version}</hadoop.version>
         <hadoop.mr1.version>${hadoop.core.version}-mr1-${cloudera.version}</hadoop.mr1.version>
         <log4j.version>1.2.15</log4j.version>

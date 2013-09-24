@@ -1,0 +1,13 @@
+Links:
+HDFS: http://nn1.hdplab.cybervisiontech.com.ua:50070/dfshealth.jsp
+JobTracker: http://nn1.hdplab.cybervisiontech.com.ua:50030/jobtracker.jsp
+Oozie: http://nn1.hdplab.cybervisiontech.com.ua:11000/oozie/
+HUE: http://nn1.hdplab.cybervisiontech.com.ua:8888/
+
+MR demo jobs:
+1) hadoop jar ~/git/hadoop-lessons/target/mr-demo.jar com.ashvayka.hadoop.jobs.LanguagePageCountJob /wikidata/pageviews/pagecounts-20130101-000000.gz.raw
+2) hadoop jar ~/git/hadoop-lessons/target/mr-demo.jar com.ashvayka.hadoop.jobs.LanguageProjectPageCountJob /wikidata/pageviews/pagecounts-20130101-000000.gz.raw
+Oozie demo jobs:
+1) oozie job -oozie http://nn1.hdplab.cybervisiontech.com.ua:11000/oozie -config job.properties -run
+
+
